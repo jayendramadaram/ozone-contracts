@@ -11,20 +11,13 @@ let executor: Executor;
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function main() {
+
+  const [owner, user] = await ethers.getSigners();
+
   const Schnorr = await ethers.getContractFactory("Schnorr");
   const schnorr = await Schnorr.deploy();
   await schnorr.waitForDeployment();
-  // await sleep(50000);
-  // console.log("Schnorr deployed to:", schnorr.target);
 
-  // // Verify Schnorr contract
-  // console.log("Verifying Schnorr contract...");
-  // await hre.run("verify:verify", {
-  //   address: schnorr.target,
-  //   constructorArguments: [],
-  //   force : true
-
-  // });
 
   privKey = getBytes("0x4da08f2d9ac12aa8ef962f089cb902700c750ffcee38a3020ef190f5a220c305");
   pubKey = secp256k1.publicKeyCreate(privKey);
@@ -38,17 +31,6 @@ async function main() {
   await executor.waitForDeployment();
 
   console.log("Executor deployed to:", executor.target);
-  await sleep(50000);
-
-  // Verify Executor contract
-  console.log("Verifying Executor contract...");
-  await hre.run("verify:verify", {
-    address: executor.target,
-    constructorArguments: [pubKey.slice(1, 33)],
-    libraries: {
-      Schnorr: schnorr.target.toString(),
-    },
-  });
 
   const rand_bytes = randomBytes(32);
 
@@ -65,13 +47,9 @@ async function main() {
   console.log("New token deployed to:", newTokenAddress);
   await sleep(50000);
 
-  // Verify the new token contract
-  console.log("Verifying new token contract...");
-  await hre.run("verify:verify", {
-    address: newTokenAddress,
-    constructorArguments: ["Ozone Bitcoin", "oBTC", 8, rand_bytes],
-    force : true
-  });
+  const token = await ethers.getContractAt("OzoneWrapperToken", newTokenAddress)
+  const approve_tx = await ( token).connect(user).approve(executor.target, 100000000000000000000000000000n);
+  await approve_tx.wait();
 
   console.log("schnorr target", schnorr.target);
   console.log("privKey", hexlify(privKey));
@@ -80,6 +58,24 @@ async function main() {
   console.log("newTokenAddress", newTokenAddress);
 
   console.log("done");
+
+    // Verify the new token contract
+    console.log("Verifying new token contract...");
+    await hre.run("verify:verify", {
+      address: newTokenAddress,
+      constructorArguments: ["Ozone Bitcoin", "oBTC", 8, rand_bytes],
+      force : true
+    });
+  
+    // Verify Executor contract
+    console.log("Verifying Executor contract...");
+    await hre.run("verify:verify", {
+      address: executor.target,
+      constructorArguments: [pubKey.slice(1, 33)],
+      libraries: {
+        Schnorr: schnorr.target.toString(),
+      },
+    });
 }
 
 main()
@@ -88,3 +84,43 @@ main()
     console.error(error);
     process.exit(1);
   });
+
+
+  /// addresses
+//   Executor deployed to: 0xDeb4C7AB99e46aFEbfE374F6a7BBFB63D309166f
+// New token deployed to: 0xdbfa6D8aC5e5d684E4Fe6B0830242D8A716E748D
+// schnorr target 0x373AD9B7bCde205BA7c5769BeFB20F4b06095561
+// privKey 0x4da08f2d9ac12aa8ef962f089cb902700c750ffcee38a3020ef190f5a220c305
+// pubKey 0x025555cd61d59ad4216644c3855bd3ce864b36c5c221faa390219a2d609ecc2bb8
+// executor target 0xDeb4C7AB99e46aFEbfE374F6a7BBFB63D309166f
+// newTokenAddress 0xdbfa6D8aC5e5d684E4Fe6B0830242D8A716E748D
+
+// morph
+// Executor deployed to: 0xDeb4C7AB99e46aFEbfE374F6a7BBFB63D309166f
+// New token deployed to: 0xdbfa6D8aC5e5d684E4Fe6B0830242D8A716E748D
+// schnorr target 0x373AD9B7bCde205BA7c5769BeFB20F4b06095561
+// privKey 0x4da08f2d9ac12aa8ef962f089cb902700c750ffcee38a3020ef190f5a220c305
+// pubKey 0x025555cd61d59ad4216644c3855bd3ce864b36c5c221faa390219a2d609ecc2bb8
+// executor target 0xDeb4C7AB99e46aFEbfE374F6a7BBFB63D309166f
+// newTokenAddress 0xdbfa6D8aC5e5d684E4Fe6B0830242D8A716E748D
+
+
+//linea
+// Executor deployed to: 0xDeb4C7AB99e46aFEbfE374F6a7BBFB63D309166f
+// New token deployed to: 0xdbfa6D8aC5e5d684E4Fe6B0830242D8A716E748D
+// schnorr target 0x373AD9B7bCde205BA7c5769BeFB20F4b06095561
+// privKey 0x4da08f2d9ac12aa8ef962f089cb902700c750ffcee38a3020ef190f5a220c305
+// pubKey 0x025555cd61d59ad4216644c3855bd3ce864b36c5c221faa390219a2d609ecc2bb8
+// executor target 0xDeb4C7AB99e46aFEbfE374F6a7BBFB63D309166f
+// newTokenAddress 0xdbfa6D8aC5e5d684E4Fe6B0830242D8A716E748D
+// done
+
+// hedera
+// Executor deployed to: 0xDeb4C7AB99e46aFEbfE374F6a7BBFB63D309166f
+// New token deployed to: 0xdbfa6D8aC5e5d684E4Fe6B0830242D8A716E748D
+// schnorr target 0x373AD9B7bCde205BA7c5769BeFB20F4b06095561
+// privKey 0x4da08f2d9ac12aa8ef962f089cb902700c750ffcee38a3020ef190f5a220c305
+// pubKey 0x025555cd61d59ad4216644c3855bd3ce864b36c5c221faa390219a2d609ecc2bb8
+// executor target 0xDeb4C7AB99e46aFEbfE374F6a7BBFB63D309166f
+// newTokenAddress 0xdbfa6D8aC5e5d684E4Fe6B0830242D8A716E748D
+// done

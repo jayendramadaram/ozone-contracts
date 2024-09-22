@@ -54,7 +54,40 @@ const config: HardhatUserConfig = {
       url: "https://sepolia.optimism.io",
       chainId: 11155420,
       accounts: [`0x${process.env.PRIVKEY1}` , `0x${process.env.PRIVKEY2}`]
-    }
+    },
+
+    airdao : {
+      url: "https://network.ambrosus-test.io",
+      chainId : 22040,
+      accounts: [`0x${process.env.PRIVKEY1}` , `0x${process.env.PRIVKEY2}`]
+    },
+    
+    rootstack : {
+      url: "https://mycrypto.testnet.rsk.co",
+      chainId : 31,
+      accounts: [`0x${process.env.PRIVKEY1}` , `0x${process.env.PRIVKEY2}`]
+    },
+
+    flow : {
+      url: "https://testnet.evm.nodes.onflow.org",
+      chainId : 545,
+      accounts: [`0x${process.env.PRIVKEY1}` , `0x${process.env.PRIVKEY2}`]
+    },
+    morph : {
+      url: "https://rpc-quicknode-holesky.morphl2.io",
+      chainId : 2810,
+      accounts: [`0x${process.env.PRIVKEY1}` , `0x${process.env.PRIVKEY2}`]
+    },
+    linea : {
+      url: "https://rpc.sepolia.linea.build",
+      chainId : 59141,
+      accounts: [`0x${process.env.PRIVKEY1}` , `0x${process.env.PRIVKEY2}`]
+    },
+    hedera : {
+      url: "https://testnet.hashio.io/api",
+      chainId : 296,
+      accounts: [`0x${process.env.PRIVKEY1}` , `0x${process.env.PRIVKEY2}`]
+    },
   },
 
   etherscan : {
